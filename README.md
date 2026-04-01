@@ -31,20 +31,3 @@ GEMINI_API_KEY=your_gemini_api_key
 RESEND_API_KEY=your_resend_api_key
 FRONTEND_URL=http://localhost:5173
 ```
-
-### 2. Backend Setup
-1. Open a terminal and navigate to the `backend/` directory.
-2. Install dependencies: `npm install`
-3. Run database seed to set up your primary admin account: `node seed.js`
-4. Start backend server: `npm run dev`
-
-### 3. Frontend Setup
-1. Open another terminal and navigate to the `frontend/` directory.
-2. Install dependencies: `npm install`
-3. Start frontend dev server: `npm run dev`
-4. Visit `http://localhost:5173` to see the Portfolio or `/admin/login` for the Dashboard.
-
-### 4. Testing Webhooks Locally
-To test webhooks during standard development, configure a localized tunnel (like `ngrok`) pointing to your port `5001`:
-`ngrok http 5001`
-Then configure your GitHub Developer Settings to dispatch webhooks to `https://<YOUR-NGROK-URL>.ngrok-free.app/api/webhook/github`.
