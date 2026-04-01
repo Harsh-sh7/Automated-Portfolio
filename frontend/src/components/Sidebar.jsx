@@ -1,16 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Code, MessageSquare, Briefcase, Mail, MapPin, Link as LinkIcon } from 'lucide-react';
+import { Code, MessageSquare, Briefcase, Mail, MapPin, Link as LinkIcon, Users } from 'lucide-react';
+import axios from 'axios';
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const { data } = await axios.get('https://api.github.com/users/Harsh-sh7');
+        setProfile(data);
+      } catch (err) {
+        console.error("Failed to load GitHub profile", err);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  if (!profile) {
+    return <div className="w-full md:w-1/4 pr-0 md:pr-8 mb-8 md:mb-0 text-gray-400">Loading profile...</div>;
+  }
 
   return (
     <div className="w-full md:w-1/4 pr-0 md:pr-8 mb-8 md:mb-0">
-      <img src="https://avatars.githubusercontent.com/u/9919?v=4" alt="Profile" className="w-64 h-64 rounded-full border border-github-border mb-6 shadow-lg object-cover" />
-      <h1 className="text-2xl font-bold mb-1">Developer Name</h1>
-      <h2 className="text-xl text-gray-400 mb-4 font-light">username</h2>
-      <p className="mb-6 text-sm">Full-stack developer passionate about building scalable web applications and exploring new technologies.</p>
+      <img src={profile.avatar_url} alt="Profile" className="w-64 h-64 rounded-full border border-github-border mb-6 shadow-lg object-cover" />
+      <h1 className="text-2xl font-bold mb-1">{profile.name || profile.login}</h1>
+      <h2 className="text-xl text-gray-400 mb-4 font-light">{profile.login}</h2>
+      <p className="mb-6 text-sm">{profile.bio || 'Full-stack developer passionate about building scalable web applications and exploring new technologies.'}</p>
       
       <button 
         onClick={() => navigate('/admin/dashboard')}
@@ -20,9 +38,10 @@ const Sidebar = () => {
       </button>
 
       <div className="flex flex-col gap-2 text-sm text-gray-400 mb-6">
-        <div className="flex items-center gap-2"><MapPin className="w-4 h-4" /> San Francisco, CA</div>
-        <div className="flex items-center gap-2"><Mail className="w-4 h-4" /> hello@example.com</div>
-        <div className="flex items-center gap-2"><LinkIcon className="w-4 h-4" /> <a href="#" className="hover:text-github-accent transition-colors">example.com</a></div>
+        <div className="flex items-center gap-2"><Users className="w-4 h-4" /> <span className="font-semibold text-white">{profile.followers}</span> followers · <span className="font-semibold text-white">{profile.following}</span> following</div>
+        {profile.location && <div className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {profile.location}</div>}
+        {profile.email && <div className="flex items-center gap-2"><Mail className="w-4 h-4" /> <a href={`mailto:${profile.email}`} className="hover:text-github-accent transition-colors">{profile.email}</a></div>}
+        {profile.blog && <div className="flex items-center gap-2"><LinkIcon className="w-4 h-4" /> <a href={profile.blog.startsWith('http') ? profile.blog : `https://${profile.blog}`} target="_blank" rel="noreferrer" className="hover:text-github-accent transition-colors">{profile.blog}</a></div>}
       </div>
 
       <div className="border-t border-github-border pt-6 mb-6">
@@ -36,11 +55,6 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <div className="flex gap-4 border-t border-github-border pt-6 text-gray-400">
-        <a href="#" className="hover:text-github-accent transition-colors"><Code className="w-5 h-5" /></a>
-        <a href="#" className="hover:text-github-accent transition-colors"><MessageSquare className="w-5 h-5" /></a>
-        <a href="#" className="hover:text-github-accent transition-colors"><Briefcase className="w-5 h-5" /></a>
-      </div>
     </div>
   );
 };
