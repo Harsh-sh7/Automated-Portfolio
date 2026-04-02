@@ -14,6 +14,16 @@ const Sidebar = () => {
         setProfile(data);
       } catch (err) {
         console.error("Failed to load GitHub profile", err);
+        setProfile({
+          avatar_url: "https://avatars.githubusercontent.com/u/9919?v=4",
+          name: "Harshit Shakya",
+          login: "Harsh-sh7",
+          bio: "Full-stack developer passionate about building scalable web applications and exploring new technologies.",
+          followers: 0,
+          following: 0,
+          location: "India",
+          email: "harshakya56@gmail.com"
+        });
       }
     };
     fetchProfile();
