@@ -11,8 +11,8 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/portfolio')
     await Admin.deleteMany({});
     
     // Create new Admin
-    const adminEmail = process.env.ADMIN_EMAIL || 'harshit@gmail.com';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'hello123';
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
 
     const admin = new Admin({
       email: adminEmail,
