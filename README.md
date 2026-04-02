@@ -15,7 +15,7 @@ A modern, automated developer portfolio that syncs your GitHub repositories dire
 - **Backend:** Node.js, Express.js, Mongoose
 - **Database:** MongoDB
 - **External APIs:** Google Gemini AI, GitHub REST API, Resend SMTP
-- **Security:** Helmet, Morgan, JSONWebToken, BcryptJS
+- **Security:**  Helmet, Morgan, JSONWebToken, BcryptJS
 
 ## Setup Instructions
 
