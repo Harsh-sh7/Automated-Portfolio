@@ -1,46 +1,145 @@
 import React from 'react';
-import { FolderGit2, ExternalLink } from 'lucide-react';
+import { ExternalLink, GitBranch, Zap, ArrowUpRight, Tag } from 'lucide-react';
 
-const ProjectCard = ({ project }) => {
+const CARD_ACCENTS = [
+  { color: '#6366f1', bg: 'rgba(99,102,241,0.08)',  border: 'rgba(99,102,241,0.2)'  },
+  { color: '#06b6d4', bg: 'rgba(6,182,212,0.08)',   border: 'rgba(6,182,212,0.2)'   },
+  { color: '#10b981', bg: 'rgba(16,185,129,0.08)',  border: 'rgba(16,185,129,0.2)'  },
+  { color: '#f59e0b', bg: 'rgba(245,158,11,0.08)',  border: 'rgba(245,158,11,0.2)'  },
+  { color: '#ec4899', bg: 'rgba(236,72,153,0.08)',  border: 'rgba(236,72,153,0.2)'  },
+];
+
+const deriveInsight = (project) => {
+  if (project.features?.length > 0) return project.features[0];
+  if (project.description) {
+    const words = project.description.split(' ');
+    return words.slice(0, 14).join(' ') + (words.length > 14 ? '…' : '');
+  }
+  return 'Modern full-stack architecture with scalable design patterns.';
+};
+
+const ProjectCard = ({ project, index = 0 }) => {
+  const acc       = CARD_ACCENTS[index % CARD_ACCENTS.length];
+  const insight   = deriveInsight(project);
+  const techCount = project.tech_stack?.length || 0;
+  const primaryLink = project.live_url || project.github_url || '#';
+
   return (
-    <div className="bg-github-card border border-github-border rounded-xl p-5 hover:border-gray-500 transition-all shadow-md flex flex-col h-full group">
-      <div className="flex justify-between items-start mb-2 border-b border-github-border pb-3">
-        <h3 className="text-lg font-bold text-github-accent group-hover:underline cursor-pointer">
-          <a href={project.github_url} target="_blank" rel="noreferrer" className="flex items-center gap-2">
-            <FolderGit2 className="w-5 h-5 text-gray-400" />
+    <div
+      className="flex flex-col h-full rounded-2xl p-5 animate-slide-up transition-all duration-300 group"
+      style={{
+        background: '#111111',
+        border: `1px solid #1e1e1e`,
+        animationDelay: `${(index % 6) * 60}ms`,
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.background = '#161616';
+        e.currentTarget.style.borderColor = acc.border;
+        e.currentTarget.style.transform = 'translateY(-3px)';
+        e.currentTarget.style.boxShadow = `0 12px 32px rgba(0,0,0,0.4), 0 0 20px ${acc.color}15`;
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.background = '#111111';
+        e.currentTarget.style.borderColor = '#1e1e1e';
+        e.currentTarget.style.transform = '';
+        e.currentTarget.style.boxShadow = '';
+      }}
+    >
+      {/* Header */}
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <span
+            className="w-2 h-2 rounded-full flex-shrink-0"
+            style={{ background: acc.color, boxShadow: `0 0 5px ${acc.color}80` }}
+          />
+          <h3 className="font-semibold text-white text-sm leading-snug truncate">
             {project.name}
-          </a>
-        </h3>
-        {project.live_url && (
-          <a href={project.live_url} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors">
-            <ExternalLink className="w-5 h-5" />
-          </a>
+          </h3>
+        </div>
+
+        <div className="flex items-center gap-0.5 flex-shrink-0">
+          {project.live_url && (
+            <a
+              href={project.live_url}
+              target="_blank"
+              rel="noreferrer"
+              onClick={e => e.stopPropagation()}
+              className="p-1.5 rounded-lg text-dash-muted transition-all"
+              title="Live Demo"
+              onMouseEnter={e => { e.currentTarget.style.color = acc.color; e.currentTarget.style.background = acc.bg; }}
+              onMouseLeave={e => { e.currentTarget.style.color = ''; e.currentTarget.style.background = ''; }}
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          )}
+          {project.github_url && (
+            <a
+              href={project.github_url}
+              target="_blank"
+              rel="noreferrer"
+              onClick={e => e.stopPropagation()}
+              className="p-1.5 rounded-lg text-dash-muted transition-all"
+              title="View Code"
+              onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = '#222'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = ''; e.currentTarget.style.background = ''; }}
+            >
+              <GitBranch className="w-3.5 h-3.5" />
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* Description */}
+      <p className="text-[12px] text-dash-secondary leading-relaxed mb-3 flex-grow line-clamp-3">
+        {project.description || 'A modern project built with scalable architecture and best practices.'}
+      </p>
+
+      {/* Key insight */}
+      <div
+        className="flex items-start gap-2 rounded-xl p-3 mb-4"
+        style={{ background: acc.bg, border: `1px solid ${acc.border}` }}
+      >
+        <Zap className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: acc.color }} />
+        <p className="text-[11px] leading-relaxed line-clamp-2" style={{ color: acc.color }}>
+          <span className="font-semibold text-white">Insight: </span>{insight}
+        </p>
+      </div>
+
+      {/* Tech tags */}
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {project.tech_stack?.slice(0, 4).map((tech, i) => (
+          <span key={i} className="tech-tag">{tech}</span>
+        ))}
+        {techCount > 4 && (
+          <span className="tech-tag">+{techCount - 4}</span>
         )}
       </div>
 
-      <p className="text-sm text-gray-400 mb-4 flex-grow">
-        {project.description || 'No description provided.'}
-      </p>
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-3" style={{ borderTop: '1px solid #1e1e1e' }}>
+        <div className="flex items-center gap-1.5 text-[10px] text-dash-muted">
+          <Tag className="w-3 h-3" />
+          <span>{techCount} tools</span>
+        </div>
 
-      {project.features && project.features.length > 0 && (
-        <ul className="list-disc text-xs text-gray-500 mb-4 min-h-[3rem] ml-4 flex flex-col gap-1">
-          {project.features.slice(0, 3).map((feat, i) => (
-            <li key={i} className="leading-snug text-wrap break-words pr-2">{feat}</li>
-          ))}
-        </ul>
-      )}
-
-      <div className="flex flex-wrap gap-2 mt-auto pt-4">
-        {project.tech_stack?.slice(0, 3).map((tech, i) => (
-          <span key={i} className="px-2 py-0.5 text-xs rounded-full border border-github-border bg-[#0d1117] text-gray-300">
-            {tech}
-          </span>
-        ))}
-        {project.tech_stack?.length > 3 && (
-          <span className="px-2 py-0.5 text-xs rounded-full border border-github-border bg-[#0d1117] text-gray-500">
-            +{project.tech_stack.length - 3}
-          </span>
-        )}
+        <a
+          href={primaryLink}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-lg transition-all"
+          style={{ background: acc.bg, border: `1px solid ${acc.border}`, color: acc.color }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = `${acc.color}25`;
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = acc.bg;
+            e.currentTarget.style.transform = '';
+          }}
+        >
+          View Dashboard
+          <ArrowUpRight className="w-3.5 h-3.5" />
+        </a>
       </div>
     </div>
   );

@@ -1,9 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-github-bg text-github-text font-sans antialiased;
+  *, *::before, *::after {
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: #2a2a2a #111111;
   }
+
+  *::-webkit-scrollbar          { width: 4px; height: 4px; }
+  *::-webkit-scrollbar-track    { background: #111111; }
+  *::-webkit-scrollbar-thumb    { background: #2a2a2a; border-radius: 99px; }
+  *::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
+
+  body {
+    background-color: #080808;
+    color: #f5f5f5;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+  }
+}
+
+@layer components {
+
+  /* ── Card ─────────────────────────────── */
+  .glass-card {
+    background: #111111;
+    border: 1px solid #1e1e1e;
+    border-radius: 14px;
+  }
+
+  .glass-card-hover {
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .glass-card-hover:hover {
+    background: #161616;
+    border-color: #2a2a2a;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ── Sidebar nav item ─────────────────── */
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #555555;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    position: relative;
+    border: 1px solid transparent;
+  }
+  .nav-item:hover {
+    color: #a0a0a0;
+    background: #161616;
+  }
+  .nav-item.active {
+    color: #ffffff;
+    background: #191919;
+    border-color: #2a2a2a;
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 22%;
+    height: 56%;
+    width: 2px;
+    background: #ffffff;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* ── Tag pill ─────────────────────────── */
+  .tech-tag {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    background: #191919;
+    color: #a0a0a0;
+    border: 1px solid #2a2a2a;
+    white-space: nowrap;
+  }
+
+  /* ── KPI ──────────────────────────────── */
+  .kpi-value {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: #ffffff;
+  }
+
+  /* ── Insight / status badges ──────────── */
+  .insight-badge {
+    background: #191919;
+    border: 1px solid #2a2a2a;
+    color: #a0a0a0;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  /* ── Pulsing status dot ───────────────── */
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .status-dot-live {
+    background: #ffffff;
+    box-shadow: 0 0 0 0 rgba(255,255,255,0.4);
+    animation: pulse-white 2.5s infinite;
+  }
+  @keyframes pulse-white {
+    0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+    70%  { box-shadow: 0 0 0 5px rgba(255,255,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+  }
+
+  /* ── Divider ──────────────────────────── */
+  .section-divider {
+    border: none;
+    border-top: 1px solid #1e1e1e;
+    margin: 0;
+  }
+
+  /* ── Button base ──────────────────────── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: #ffffff;
+    color: #080808;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .btn-primary:hover {
+    background: #e0e0e0;
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: transparent;
+    color: #a0a0a0;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn-ghost:hover {
+    background: #191919;
+    color: #f5f5f5;
+    border-color: #3a3a3a;
+  }
+}
+
+@layer utilities {
+  .animation-delay-100 { animation-delay: 80ms; }
+  .animation-delay-200 { animation-delay: 160ms; }
+  .animation-delay-300 { animation-delay: 240ms; }
+  .animation-delay-400 { animation-delay: 320ms; }
+  .animation-delay-500 { animation-delay: 400ms; }
 }

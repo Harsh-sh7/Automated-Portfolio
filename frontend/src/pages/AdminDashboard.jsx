@@ -38,7 +38,7 @@ const AdminDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('adminInfo');
-    navigate('/admin/login');
+    navigate('/');
   };
 
   const handleAction = async (id, action) => {

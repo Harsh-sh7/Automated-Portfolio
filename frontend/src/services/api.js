@@ -19,6 +19,18 @@ export const loginAdmin = async (email, password) => {
   return data;
 };
 
+// Answer must match ADMIN_SECURITY_ANSWER env var — checked server-side only
+export const verifySecurityAnswer = async (answer) => {
+  const { data } = await api.post('/admin/verify-security', { answer });
+  return data; // returns { resetToken, verified: true }
+};
+
+export const resetAdminPassword = async (email, newPassword, resetToken) => {
+  const { data } = await api.post('/admin/reset-password', { email, newPassword, resetToken });
+  return data;
+};
+
+
 export const getApprovedProjects = async () => {
   const { data } = await api.get('/projects');
   return data;

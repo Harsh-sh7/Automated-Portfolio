@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { authAdmin } = require('../controllers/authController');
+const { authAdmin, verifySecurityAnswer, resetPassword } = require('../controllers/authController');
 
-router.post('/login', authAdmin);
+router.post('/login',           authAdmin);
+router.post('/verify-security', verifySecurityAnswer);
+router.post('/reset-password',  resetPassword);
 
 module.exports = router;
