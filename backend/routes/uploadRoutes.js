@@ -2,23 +2,48 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const { protect } = require('../middleware/authMiddleware');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const router = express.Router();
 
-// Configure storage
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename(req, file, cb) {
-    cb(
-      null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-    );
-  },
-});
+// Configure Cloudinary if credentials are provided
+const isCloudinaryConfigured = 
+  process.env.CLOUDINARY_CLOUD_NAME && 
+  process.env.CLOUDINARY_API_KEY && 
+  process.env.CLOUDINARY_API_SECRET;
 
-// File filter to allow only images
+let storage;
+
+if (isCloudinaryConfigured) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+
+  storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'portfolio_projects',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    },
+  });
+} else {
+  // Fallback to local storage
+  storage = multer.diskStorage({
+    destination(req, file, cb) {
+      cb(null, 'uploads/');
+    },
+    filename(req, file, cb) {
+      cb(
+        null,
+        `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
+      );
+    },
+  });
+}
+
 function checkFileType(file, cb) {
   const filetypes = /jpg|jpeg|png|webp/;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
@@ -34,7 +59,11 @@ function checkFileType(file, cb) {
 const upload = multer({
   storage,
   fileFilter: function (req, file, cb) {
-    checkFileType(file, cb);
+    if (!isCloudinaryConfigured) {
+      checkFileType(file, cb);
+    } else {
+      cb(null, true); // Cloudinary storage handles filtering based on params
+    }
   },
 });
 
@@ -46,10 +75,9 @@ router.post('/', protect, upload.single('image'), (req, res) => {
     return res.status(400).json({ message: 'No file uploaded' });
   }
   
-  // Return the path that can be used by the frontend
-  // Since we serve /uploads as static, we return the filename or full path
-  // We'll return the relative path from the server root
-  const filePath = `/${req.file.path}`;
+  // If using Cloudinary, return the secure_url
+  // If using local, return the local path
+  const filePath = isCloudinaryConfigured ? req.file.path : `/${req.file.path}`;
   res.send(filePath);
 });
 

@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -13,13 +15,13 @@ const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const webhookRoutes = require('./routes/webhookRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
-const path = require('path');
 
 // Middleware
 app.use(express.json());
 app.use(cors({ origin: true, credentials: true }));
 app.use(helmet({
-  crossOriginResourcePolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: false, 
 }));
 app.use(morgan('dev'));
 
@@ -31,7 +33,11 @@ app.use('/api/upload', uploadRoutes);
 
 // Static files
 const __dirname_path = path.resolve();
-app.use('/uploads', express.static(path.join(__dirname_path, '/uploads')));
+const uploadsPath = path.join(__dirname_path, '/uploads');
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsPath));
 
 // Database Connection
 mongoose
