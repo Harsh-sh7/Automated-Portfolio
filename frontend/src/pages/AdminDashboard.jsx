@@ -252,22 +252,22 @@ const AdminDashboard = () => {
       </div>
 
       <h2 className="text-2xl font-bold mb-4 text-green-400">Added to Portfolio</h2>
-      <div className="bg-github-card border border-github-border rounded-lg overflow-x-auto mb-12">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-github-border text-github-text">
-              <th className="p-4 font-semibold text-sm w-1/4 pl-12">Project Name</th>
-              <th className="p-4 font-semibold text-sm">Image</th>
-              <th className="p-4 font-semibold text-sm">Status</th>
-              <th className="p-4 font-semibold text-sm w-1/3">Features (AI)</th>
-              <th className="p-4 font-semibold text-sm">Actions</th>
-            </tr>
-          </thead>
-          <DndContext 
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
+      <DndContext 
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="bg-github-card border border-github-border rounded-lg overflow-x-auto mb-12">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-github-border text-github-text">
+                <th className="p-4 font-semibold text-sm w-1/4 pl-12">Project Name</th>
+                <th className="p-4 font-semibold text-sm">Image</th>
+                <th className="p-4 font-semibold text-sm">Status</th>
+                <th className="p-4 font-semibold text-sm w-1/3">Features (AI)</th>
+                <th className="p-4 font-semibold text-sm">Actions</th>
+              </tr>
+            </thead>
             <SortableContext 
               items={data.added.map(p => p._id)}
               strategy={verticalListSortingStrategy}
@@ -289,9 +289,9 @@ const AdminDashboard = () => {
                 )}
               </tbody>
             </SortableContext>
-          </DndContext>
-        </table>
-      </div>
+          </table>
+        </div>
+      </DndContext>
 
       <h2 className="text-2xl font-bold mb-4 text-gray-300">Not Added to Portfolio (GitHub Sync)</h2>
       <div className="bg-github-card border border-github-border rounded-lg overflow-x-auto">
