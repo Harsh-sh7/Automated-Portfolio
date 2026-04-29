@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
@@ -31,13 +30,14 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/webhook', webhookRoutes);
 app.use('/api/upload', uploadRoutes);
 
-// Static files
-const __dirname_path = path.resolve();
-const uploadsPath = path.join(__dirname_path, '/uploads');
-if (!fs.existsSync(uploadsPath)) {
-  fs.mkdirSync(uploadsPath, { recursive: true });
-}
-app.use('/uploads', express.static(uploadsPath));
+// Health check / Ping route
+app.get('/ping', (req, res) => res.send('pong'));
+
+// Self-ping to keep Render awake (every 14 mins)
+const URL = `https://harshit-shakya-portfolio.onrender.com/ping`;
+setInterval(() => {
+  fetch(URL).catch(err => console.log('Ping failed:', err.message));
+}, 14 * 60 * 1000);
 
 // Database Connection
 mongoose

@@ -112,9 +112,20 @@ const ProjectCard = ({ project, index = 0 }) => {
 
       {/* Description */}
       <div className="mb-4 flex-grow overflow-y-auto max-h-32 custom-scrollbar">
-        <p className="text-[12.5px] text-dash-secondary leading-relaxed font-medium">
-          {project.description || 'A modern project built with scalable architecture and best practices.'}
-        </p>
+        {project.description?.includes('*') || project.description?.includes('- ') ? (
+          <ul className="space-y-1.5 list-none">
+            {project.description.split(/[*\-]\s+/).filter(p => p.trim()).map((point, i) => (
+              <li key={i} className="text-[12.5px] text-dash-secondary leading-relaxed font-medium flex gap-2">
+                <span className="text-white/30 mt-1.5 w-1 h-1 rounded-full bg-current shrink-0" style={{ background: acc.color }} />
+                {point.trim()}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-[12.5px] text-dash-secondary leading-relaxed font-medium">
+            {project.description || 'A modern project built with scalable architecture and best practices.'}
+          </p>
+        )}
       </div>
 
       {/* Key insight */}
