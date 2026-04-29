@@ -8,7 +8,8 @@ const {
   approveProject,
   rejectProject,
   getDashboardData,
-  importProject
+  importProject,
+  reorderProjects
 } = require('../controllers/projectController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -22,6 +23,7 @@ router.get('/reject/:id', rejectProject);
 // Private Admin routes
 router.get('/admin/dashboard-data', protect, getDashboardData);
 router.post('/admin/import', protect, importProject);
+router.put('/admin/reorder', protect, reorderProjects);
 router.get('/admin/all', protect, getAllProjects);
 router.put('/:id', protect, updateProject);
 router.delete('/:id', protect, deleteProject);

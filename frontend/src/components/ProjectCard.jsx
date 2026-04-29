@@ -23,6 +23,7 @@ const ProjectCard = ({ project, index = 0 }) => {
   const insight   = deriveInsight(project);
   const techCount = project.tech_stack?.length || 0;
   const primaryLink = project.live_url || project.github_url || '#';
+  const API_BASE_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5001';
 
   return (
     <div
@@ -45,29 +46,48 @@ const ProjectCard = ({ project, index = 0 }) => {
         e.currentTarget.style.boxShadow = '';
       }}
     >
+      {/* Image Section */}
+      {project.image_url ? (
+        <div className="relative w-full h-40 mb-4 rounded-xl overflow-hidden group/img">
+          <img 
+            src={project.image_url.startsWith('http') ? project.image_url : `${API_BASE_URL}${project.image_url}`} 
+            alt={project.name} 
+            className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-300" />
+        </div>
+      ) : (
+        <div 
+          className="w-full h-32 mb-4 rounded-xl flex items-center justify-center border border-dashed border-white/10 bg-white/5"
+        >
+          <Tag className="w-6 h-6 text-dash-muted opacity-20" />
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-start justify-between gap-2 mb-3">
         <div className="flex items-center gap-2 min-w-0">
           <span
             className="w-2 h-2 rounded-full flex-shrink-0"
-            style={{ background: acc.color, boxShadow: `0 0 5px ${acc.color}80` }}
+            style={{ background: acc.color, boxShadow: `0 0 10px ${acc.color}` }}
           />
-          <h3 className="font-semibold text-white text-sm leading-snug truncate">
+          <h3 className="font-bold text-white text-[15px] leading-snug truncate">
             {project.name}
           </h3>
         </div>
 
-        <div className="flex items-center gap-0.5 flex-shrink-0">
+        <div className="flex items-center gap-1 flex-shrink-0">
           {project.live_url && (
             <a
               href={project.live_url}
               target="_blank"
               rel="noreferrer"
               onClick={e => e.stopPropagation()}
-              className="p-1.5 rounded-lg text-dash-muted transition-all"
+              className="p-1.5 rounded-lg text-dash-muted transition-all hover:text-white"
               title="Live Demo"
+              style={{ background: 'rgba(255,255,255,0.05)' }}
               onMouseEnter={e => { e.currentTarget.style.color = acc.color; e.currentTarget.style.background = acc.bg; }}
-              onMouseLeave={e => { e.currentTarget.style.color = ''; e.currentTarget.style.background = ''; }}
+              onMouseLeave={e => { e.currentTarget.style.color = ''; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
             >
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
@@ -78,10 +98,11 @@ const ProjectCard = ({ project, index = 0 }) => {
               target="_blank"
               rel="noreferrer"
               onClick={e => e.stopPropagation()}
-              className="p-1.5 rounded-lg text-dash-muted transition-all"
+              className="p-1.5 rounded-lg text-dash-muted transition-all hover:text-white"
               title="View Code"
+              style={{ background: 'rgba(255,255,255,0.05)' }}
               onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = '#222'; }}
-              onMouseLeave={e => { e.currentTarget.style.color = ''; e.currentTarget.style.background = ''; }}
+              onMouseLeave={e => { e.currentTarget.style.color = ''; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
             >
               <GitBranch className="w-3.5 h-3.5" />
             </a>
@@ -90,18 +111,24 @@ const ProjectCard = ({ project, index = 0 }) => {
       </div>
 
       {/* Description */}
-      <p className="text-[12px] text-dash-secondary leading-relaxed mb-3 flex-grow line-clamp-3">
-        {project.description || 'A modern project built with scalable architecture and best practices.'}
-      </p>
+      <div className="mb-4 flex-grow overflow-y-auto max-h-32 custom-scrollbar">
+        <p className="text-[12.5px] text-dash-secondary leading-relaxed font-medium">
+          {project.description || 'A modern project built with scalable architecture and best practices.'}
+        </p>
+      </div>
 
       {/* Key insight */}
       <div
-        className="flex items-start gap-2 rounded-xl p-3 mb-4"
-        style={{ background: acc.bg, border: `1px solid ${acc.border}` }}
+        className="flex items-start gap-2 rounded-xl p-3 mb-4 backdrop-blur-md transition-transform duration-300 group-hover:scale-[1.02]"
+        style={{ 
+          background: `linear-gradient(135deg, ${acc.bg}, rgba(0,0,0,0.2))`, 
+          border: `1px solid ${acc.border}`,
+          boxShadow: `0 4px 12px rgba(0,0,0,0.1)`
+        }}
       >
         <Zap className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: acc.color }} />
-        <p className="text-[11px] leading-relaxed line-clamp-2" style={{ color: acc.color }}>
-          <span className="font-semibold text-white">Insight: </span>{insight}
+        <p className="text-[11px] font-medium leading-relaxed" style={{ color: acc.color }}>
+          <span className="font-bold text-white/90">Insight: </span>{insight}
         </p>
       </div>
 

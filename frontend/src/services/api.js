@@ -61,6 +61,11 @@ export const deleteProject = async (id) => {
   return data;
 };
 
+export const reorderProjects = async (projectIds) => {
+  const { data } = await api.put('/projects/admin/reorder', { projectIds });
+  return data;
+};
+
 export const approveProject = async (id) => {
   // Wait, if it's protected from admin side, use the token
   const { data } = await api.get(`/projects/approve/${id}`);
@@ -69,6 +74,15 @@ export const approveProject = async (id) => {
 
 export const rejectProject = async (id) => {
   const { data } = await api.get(`/projects/reject/${id}`);
+  return data;
+};
+
+export const uploadImage = async (formData) => {
+  const { data } = await api.post('/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return data;
 };
 

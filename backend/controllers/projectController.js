@@ -7,7 +7,7 @@ const { summarizeReadme } = require('../services/geminiService');
 // @access  Public
 const getProjects = async (req, res) => {
   try {
-    const projects = await Project.find({ status: 'approved' }).sort({ created_at: -1 });
+    const projects = await Project.find({ status: 'approved' }).sort({ order: 1, created_at: -1 });
     res.json(projects);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -19,7 +19,7 @@ const getProjects = async (req, res) => {
 // @access  Private
 const getAllProjects = async (req, res) => {
   try {
-    const projects = await Project.find({}).sort({ created_at: -1 });
+    const projects = await Project.find({}).sort({ order: 1, created_at: -1 });
     res.json(projects);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -101,7 +101,7 @@ const rejectProject = async (req, res) => {
 // @access  Private
 const getDashboardData = async (req, res) => {
   try {
-    const dbProjects = await Project.find({}).sort({ created_at: -1 });
+    const dbProjects = await Project.find({}).sort({ order: 1, created_at: -1 });
     const githubRepos = await getUserRepos();
     
     // Map github urls for quick lookup
@@ -175,6 +175,23 @@ const importProject = async (req, res) => {
   }
 };
 
+// @desc    Reorder projects
+// @route   PUT /api/projects/admin/reorder
+// @access  Private
+const reorderProjects = async (req, res) => {
+  const { projectIds } = req.body; // Array of IDs in new order
+  
+  try {
+    const promises = projectIds.map((id, index) => 
+      Project.findByIdAndUpdate(id, { order: index })
+    );
+    await Promise.all(promises);
+    res.json({ message: 'Projects reordered' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error while reordering' });
+  }
+};
+
 module.exports = {
   getProjects,
   getAllProjects,
@@ -183,5 +200,6 @@ module.exports = {
   approveProject,
   rejectProject,
   getDashboardData,
-  importProject
+  importProject,
+  reorderProjects
 };

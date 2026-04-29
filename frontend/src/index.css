@@ -194,4 +194,18 @@
   .animation-delay-300 { animation-delay: 240ms; }
   .animation-delay-400 { animation-delay: 320ms; }
   .animation-delay-500 { animation-delay: 400ms; }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 3px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
 }
