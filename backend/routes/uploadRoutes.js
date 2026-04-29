@@ -13,6 +13,8 @@ const isCloudinaryConfigured =
   process.env.CLOUDINARY_API_KEY && 
   process.env.CLOUDINARY_API_SECRET;
 
+console.log('Cloudinary Configured:', isCloudinaryConfigured ? 'YES' : 'NO');
+
 let storage;
 
 if (isCloudinaryConfigured) {
@@ -70,15 +72,25 @@ const upload = multer({
 // @desc    Upload image
 // @route   POST /api/upload
 // @access  Private
-router.post('/', protect, upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
-  }
-  
-  // If using Cloudinary, return the secure_url
-  // If using local, return the local path
-  const filePath = isCloudinaryConfigured ? req.file.path : `/${req.file.path}`;
-  res.send(filePath);
+router.post('/', protect, (req, res, next) => {
+  upload.single('image')(req, res, function (err) {
+    if (err) {
+      console.error('Multer/Cloudinary Error:', err);
+      return res.status(400).json({ 
+        message: err.message || 'Error uploading file',
+        error: err
+      });
+    }
+    
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+    
+    // If using Cloudinary, return the secure_url
+    // If using local, return the local path
+    const filePath = isCloudinaryConfigured ? req.file.path : `/${req.file.path}`;
+    res.send(filePath);
+  });
 });
 
 module.exports = router;
